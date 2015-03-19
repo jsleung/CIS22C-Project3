@@ -36,7 +36,7 @@ AdjacencyList::~AdjacencyList()
     delete top_;
 }
 
-void AdjacencyList::add(Vertex v)
+void AdjacencyList::add(Vertex& v)
 {
     Node* temp1 = top_;
     Node* temp2 = temp1;
