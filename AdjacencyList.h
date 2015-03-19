@@ -20,7 +20,7 @@ public:
     AdjacencyList();
     AdjacencyList(Vertex v);
     ~AdjacencyList();
-    void add(Vertex v); //puts a new Vertex at the end of the linked list
+    void add(Vertex& v); //puts a new Vertex at the end of the linked list
     Vertex pop(); //deletes top Node and returns its vertexNum
     Vertex top() const; //returns what vertex is at the top of the list;
     void print();
