@@ -11,16 +11,10 @@
 #include <iomanip>
 using namespace std;
 #include "AdjacencyList.h"
+#include "TaskManager.h"
 
 AdjacencyList::AdjacencyList()
 {
-    vertex = *new Vertex();
-    top_ = 0;
-}
-
-AdjacencyList::AdjacencyList(Vertex v)
-{
-    vertex = v;
     top_ = 0;
 }
 
@@ -63,32 +57,30 @@ Vertex AdjacencyList::pop()
     {
         Node* temp = top_;
         top_ = top_->next_; //advances pointer
-        vTemp =  temp->vertex;
+        vTemp =  *temp->vertex;
         delete temp;
     }
-    return vertex;
+    return vTemp;
 }
 
 Vertex AdjacencyList::top() const
 {
-    return top_->vertex;
+    return *top_->vertex;
 }
 
 void AdjacencyList::print()
 {
     Node* temp = top_;
     
-    cout << "Vertex " << vertex.getVertexNum() << "'s Adjacency List; predecessor count = " << vertex.getPredecessorsCount() << endl;
-    
-    if(temp == 0)
+    if(top_ == 0)
         cout << "No vertices in the AdjacencyList\n";
     else
     {
-        cout << "\nVertex " << setw(10) << right << "Project Time\n";
+        cout << "Vertex " << setw(10) << right << "Project Time\n";
         while(temp != 0)
         {
-            cout << setw(3) << left << temp->vertex.getVertexNum();
-            cout << setw(7) << right << temp->vertex.edge.getTime() << endl;
+            cout << setw(3) << left << temp->vertex->getVertexNum();
+            cout << setw(7) << right << temp->vertex->edge.getTime() << endl;
             temp = temp->next_; //advance
         }
         cout << endl;
@@ -102,7 +94,7 @@ bool AdjacencyList::remove(Vertex v)
     {
         Node* nodeInFront = top_;
         
-        if(top_->vertex.getVertexNum() == v.getVertexNum())
+        if(top_->vertex->getVertexNum() == v.getVertexNum())
         {
             top_=top_->next_;
             delete nodeInFront;
@@ -111,7 +103,7 @@ bool AdjacencyList::remove(Vertex v)
         
         while(nodeInFront != 0)
         {
-            if(nodeInFront->next_->vertex.getVertexNum() != nodeToRemove->vertex.getVertexNum())
+            if(nodeInFront->next_->vertex->getVertexNum() != nodeToRemove->vertex->getVertexNum())
                 nodeInFront = nodeInFront->next_; //advance pointer if vertexNum are not equal
             else
                 break;
@@ -133,7 +125,7 @@ Node* AdjacencyList::find(Vertex v)
     Node* temp = top_;
     while(temp != 0)
     {
-        if(temp->vertex.getVertexNum() == v.getVertexNum())
+        if(temp->vertex->getVertexNum() == v.getVertexNum())
             break;
         else
             temp=temp->next_;
