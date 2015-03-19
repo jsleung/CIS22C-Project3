@@ -9,19 +9,18 @@
 #ifndef Ass7_LinkedList_h
 #define Ass7_LinkedList_h
 #include "Node.h"
-#include "TaskManager.h"
+
+class Vertex;
 
 class AdjacencyList
 {
 private:
-    Vertex vertex;
     Node* top_;
 public:
     AdjacencyList();
-    AdjacencyList(Vertex v);
     ~AdjacencyList();
     void add(Vertex& v); //puts a new Vertex at the end of the linked list
-    Vertex pop(); //deletes top Node and returns its vertexNum
+    Vertex pop(); //deletes top Node and returns its vertex
     Vertex top() const; //returns what vertex is at the top of the list;
     void print();
     bool remove(Vertex v); //finds node equal to item and removes it
