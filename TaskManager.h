@@ -24,7 +24,7 @@ private:
 public:
     Edge() {projectTime = 0;}
     Edge(int p) {projectTime = p;}
-    int getTime() {return projectTime;}
+    int getTime() const {return projectTime;}
     void setTime(int p) {projectTime = p;}
 };
 
@@ -32,31 +32,37 @@ public:
 class Vertex
 {
 private:
+    string jobName;
     int vertexNum;
     int predecessors;
     int successors;
     int eeTime; //earliest event time
     int leTime; //latest event time
-    AdjacencyList* list;
+    AdjacencyList* adjlist;
+    AdjacencyList* invAdjList;
 public:
     Edge edge; //public in order to access data values inside Edge class
     Vertex();
     Vertex(int v, int projectTime);
-    ~Vertex();
+    Vertex(int v, int projectTime, string name);
+    Vertex(const Vertex& copy);
+    ~Vertex() {}
     
     void seteeTime(int e) {eeTime = e;}
     void setleTime(int e) {leTime = e;}
-    int getEarliestTime() {return eeTime;}
-    int getLatestTime() {return leTime;}
+    int getEarliestTime() const {return eeTime;}
+    int getLatestTime() const {return leTime;}
     void incSuccessorsCount() {successors++;}
     void decSuccessorsCount() {successors--;}
-    int getSuccessorsCount() {return successors;}
+    int getSuccessorsCount() const {return successors;}
     void incPredecessorsCount() {predecessors++;}
     void decPredecessorsCount() {predecessors--;}
-    int getPredecessorsCount() {return predecessors;}
-    int getVertexNum() {return vertexNum;}
+    int getPredecessorsCount() const {return predecessors;}
+    int getVertexNum() const {return vertexNum;}
     void setVertexNum(int v) {vertexNum = v;}
+    void setName(string n) {jobName = n;}
     void addToAdjList(Vertex& v);
+    void addToInvAdjList(Vertex& v);
     void printAdjacencyList() const;
 };
 
@@ -66,8 +72,13 @@ private:
     int numProjects;
     Vertex* projectArr;
 public:
-    TaskManager(int p) {numProjects = p; projectArr = new Vertex[numProjects];}
-    
+    TaskManager(int p);
+    ~TaskManager() {}
+    void print();
+    void addVertex(int vNum, int projTime, string name); //should not have two of the same vertex numbers
+    void connect(Vertex& predecessor, Vertex& successor); //'connects' both vertices by adding the successor into the predecessors adjacency list, and the predecessor into the sucessors inverse adjacency list
+    void disconnect(Vertex& predecessor, Vertex& successor); //removes what happens in the connect() function
+    void getInput(int numTimes);
 };
 
 
