@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 Lasecke. All rights reserved.
 //
 
-#include "TaskManager.h"
 #include "AdjacencyList.h"
 //#include "Stack.h"
 
