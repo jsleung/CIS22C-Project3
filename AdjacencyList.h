@@ -8,6 +8,9 @@
 
 #ifndef Ass7_LinkedList_h
 #define Ass7_LinkedList_h
+#include <iostream>
+#include <cstdlib>
+#include <iomanip>
 #include "Node.h"
 
 class Vertex;
@@ -15,18 +18,18 @@ class Vertex;
 class AdjacencyList
 {
 private:
-    Node* top_;
+	Node* top_;
 public:
-    AdjacencyList();
-    ~AdjacencyList();
-    void add(Vertex& v); //puts a new Vertex at the end of the linked list
-    Vertex pop(); //deletes top Node and returns its vertex
-    Vertex top() const; //returns what vertex is at the top of the list;
-    void print();
-    bool remove(Vertex v); //finds node equal to item and removes it
-    Node* find(Vertex v); //returns the node equal to item
-    bool removeLast(); //removes the last node in the list
-    
+	AdjacencyList();
+	~AdjacencyList();
+	void add(Vertex& v); //puts a new Vertex at the end of the linked list
+	Vertex pop(); //deletes top Node and returns its vertex
+	Vertex top() const; //returns what vertex is at the top of the list;
+	void print();
+	bool remove(Vertex v); //finds node equal to item and removes it
+	Node* find(Vertex v); //returns the node equal to item
+	bool removeLast(); //removes the last node in the list
+
 };
 
 
