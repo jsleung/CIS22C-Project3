@@ -7,7 +7,6 @@
 //
 
 #include "AdjacencyList.h"
-#include "TaskManager.h"
 
 AdjacencyList::AdjacencyList()
 {
