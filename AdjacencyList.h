@@ -8,9 +8,9 @@
 
 #ifndef Ass7_LinkedList_h
 #define Ass7_LinkedList_h
-#include <iostream>
 #include <cstdlib>
 #include <iomanip>
+#include "TaskManager.h"
 #include "Node.h"
 
 class Vertex;
