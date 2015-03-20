@@ -87,6 +87,7 @@ void TaskManager::addVertex(int vNum, int projTime, string name)
 	else
 	{
 		cerr << "\nThe vertex number is too high for the number of projects!\nTaskManager::addVertex()\n";
+		exit(0);
 	}
 }
 
@@ -102,13 +103,13 @@ void TaskManager::getInput(int numTimes)
 {
 	string input = "";
 	string name = "";
-	int vertexNum = 1;
+	int vertexNum = 0;
 	int jobTime = 0;
 	string temp = "";
 	int pred = 0; //predecessor
 	int succes = 0; //successor
 
-	while (isValid(input) || vertexNum < numTimes)
+	while (isValid(input) && vertexNum < numTimes)
 	{
 		cout << "Enter a name for the next job: ";
 		cin >> input;
@@ -131,9 +132,9 @@ void TaskManager::getInput(int numTimes)
 			break;
 		else
 		{
-			cout << "Which job would you like to start with?(1-" << numTimes - 1 << ") ";
+			cout << "Which job would you like to start with?(0 -" << numTimes - 1 << ") ";
 			cin >> pred;
-			cout << "Which job would you like to connect it to?(1-" << numTimes - 1 << ") ";
+			cout << "Which job would you like to connect it to?(0 -" << numTimes - 1 << ") ";
 			cin >> succes;
 			connect(projectArr[pred], projectArr[succes]);
 		}
