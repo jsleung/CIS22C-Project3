@@ -6,10 +6,6 @@
 //  Copyright (c) 2014 Brad Lasecke. All rights reserved.
 //
 
-#include <iostream>
-#include <cstdlib>
-#include <iomanip>
-using namespace std;
 #include "AdjacencyList.h"
 #include "TaskManager.h"
 
