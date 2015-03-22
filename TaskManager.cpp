@@ -154,3 +154,37 @@ void TaskManager::connect(Vertex& predecessor, Vertex& successor, int jobtime)
 	predecessor.addToAdjList(successor, jobtime);
 	successor.addToInvAdjList(predecessor, jobtime);
 }
+
+
+vector<int> TaskManager::getEE(){
+	vector<int> EE;
+	EE.resize(numProjects, 0);
+	deque<int> EEstack;
+	EEstack.push_front(0);
+	while (!EEstack.empty()){
+		int tempFront = EEstack.front();
+		EEstack.pop_front();
+		Node * firstNode = (projectArr[tempFront].getAdjList())->getTop();
+		while (firstNode != nullptr){
+			Vertex *chosen = firstNode->getVertex();
+			chosen->decPredecessorsCount();
+			if (EE[tempFront] + firstNode->getDuration() > EE[chosen->getVertexNum()]){
+				EE[chosen->getVertexNum()] = EE[tempFront] + firstNode->getDuration();
+			if (chosen->getPredecessorsCount() == 0){
+				EEstack.push_front(chosen->getVertexNum());
+				}
+			}
+			firstNode = firstNode->getNext();
+		}
+		/*cout << "pushed off " << tempFront << "\t";
+		for (int i = 0; i < numProjects; i++){
+			cout << EE[i] << ' ';
+		}
+		cout << endl;*/
+	}
+	/*for (int i = 0; i < numProjects; i++){
+		cout << EE[i] << ' ';
+	}
+	cout << endl;*/
+	return EE;
+}
