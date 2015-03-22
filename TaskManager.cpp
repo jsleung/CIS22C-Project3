@@ -2,8 +2,8 @@
 //  TaskManager.cpp
 //  Scheduler
 //
-//  Created by Brad Lasecke on 3/13/15.
-//  Copyright (c) 2015 Lasecke. All rights reserved.
+//  Created by Brad Lasecke and Joshua Leung on 3/13/15.
+//  Copyright (c) 2015 Lasecke, Leung. All rights reserved.
 //
 
 #include "AdjacencyList.h"
