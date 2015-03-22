@@ -2,8 +2,8 @@
 //  TaskManager.h
 //  Scheduler
 //
-//  Created by Brad Lasecke on 3/13/15.
-//  Copyright (c) 2015 Lasecke. All rights reserved.
+//  Created by Brad Lasecke and Joshua Leung
+//  Copyright (c) 2015 Lasecke, Leung. All rights reserved.
 //
 
 #ifndef __Scheduler__TaskManager__
@@ -68,6 +68,7 @@ public:
 	void addToAdjList(Vertex& v, int jobtime);
 	void addToInvAdjList(Vertex& v, int jobtime);
 	void printAdjacencyList() const;
+	void printInvAdjacencyList() const;
 	AdjacencyList * getAdjList() const { return adjlist; }
 	AdjacencyList * getInvAdjList() const { return invAdjList; }
 };
@@ -76,7 +77,10 @@ class TaskManager
 {
 private:
 	int numProjects;
+	int critPath;
 	vector<Vertex> projectArr;
+	vector<int> EE;
+	vector<int> LE;
 public:
 	TaskManager(int p);
 	~TaskManager() {}
@@ -85,8 +89,8 @@ public:
 	void connect(Vertex& predecessor, Vertex& successor, int jobtime); //'connects' both vertices by adding the successor into the predecessors adjacency list, and the predecessor into the sucessors inverse adjacency list
 	void disconnect(Vertex& predecessor, Vertex& successor); //removes what happens in the connect() function
 	void getInput(int numTimes);
-	vector<int> getEE();
-	vector<int> getLE();
+	void getEE();
+	void getLE();
 };
 
 
