@@ -14,6 +14,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <deque>
 
 using namespace std;
 
@@ -38,6 +39,7 @@ private:
 	int vertexNum;
 	int predecessors;
 	int successors;
+	int finalNode;
 	int eeTime; //earliest event time
 	int leTime; //latest event time
 	AdjacencyList* adjlist;
@@ -63,9 +65,11 @@ public:
 	int getVertexNum() const { return vertexNum; }
 	void setVertexNum(int v) { vertexNum = v; }
 	void setName(string n) { jobName = n; }
-	void addToAdjList(Vertex& v);
-	void addToInvAdjList(Vertex& v);
+	void addToAdjList(Vertex& v, int jobtime);
+	void addToInvAdjList(Vertex& v, int jobtime);
 	void printAdjacencyList() const;
+	AdjacencyList * getAdjList() const { return adjlist; }
+	AdjacencyList * getInvAdjList() const { return invAdjList; }
 };
 
 class TaskManager
@@ -78,9 +82,10 @@ public:
 	~TaskManager() {}
 	void print();
 	void addVertex(int vNum, int projTime, string name); //should not have two of the same vertex numbers
-	void connect(Vertex& predecessor, Vertex& successor); //'connects' both vertices by adding the successor into the predecessors adjacency list, and the predecessor into the sucessors inverse adjacency list
+	void connect(Vertex& predecessor, Vertex& successor, int jobtime); //'connects' both vertices by adding the successor into the predecessors adjacency list, and the predecessor into the sucessors inverse adjacency list
 	void disconnect(Vertex& predecessor, Vertex& successor); //removes what happens in the connect() function
 	void getInput(int numTimes);
+	vector<int> getEE();
 };
 
 
