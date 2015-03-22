@@ -64,6 +64,7 @@ TaskManager::TaskManager(int p)
 	critPath = 0;
 	numActivities = 0;
 	projectArr.resize(numProjects);
+	activityList.resize(numProjects); //Temporary resize to not require constant push_back calls
 }
 
 void TaskManager::print()
@@ -141,19 +142,26 @@ void TaskManager::getInput(int numTimes)
 			}
 			if (projectArr[pred].getAdjList()->find(projectArr[succes]) == nullptr){
 				connect(projectArr[pred], projectArr[succes], jobTime);
+				if (numActivities >= activityList.size()){
+					activityList.resize(activityList.size() * 2);
+				}
+				activityList[numActivities].predecess = pred;
+				activityList[numActivities].success = succes;
+				activityList[numActivities].duration = jobTime;
+				numActivities++;
 			}
 			else{
 				cout << "That connection was already created\n";
 			}
 		}
 	}
+	activityList.resize(numActivities);
 }
 
 void TaskManager::connect(Vertex& predecessor, Vertex& successor, int jobtime)
 {
 	predecessor.addToAdjList(successor, jobtime);
 	successor.addToInvAdjList(predecessor, jobtime);
-	numActivities++;
 }
 
 void TaskManager::getEE(){
@@ -164,19 +172,19 @@ void TaskManager::getEE(){
 	for (int i = 0; i < numProjects; i++){
 		predecessCopy[i] = projectArr[i].getPredecessorsCount();
 	}
-	EEstack.push_front(0);
+	EEstack.push_front(0); // start at vertex 0
 	while (!EEstack.empty()){
 		int tempFront = EEstack.front();
 		EEstack.pop_front();
-		Node * firstNode = (projectArr[tempFront].getAdjList())->getTop();
+		Node * firstNode = (projectArr[tempFront].getAdjList())->getTop(); // grab first node of adjacency list of vertex 0
 		while (firstNode != nullptr){
-			Vertex *chosen = firstNode->getVertex();
-			predecessCopy[chosen->getVertexNum()]--;
-			if (EE[tempFront] + firstNode->getDuration() > EE[chosen->getVertexNum()]){
+			Vertex *chosen = firstNode->getVertex(); //look at first Node's vertex (a successor)
+			predecessCopy[chosen->getVertexNum()]--; //decrease the successor's predecessor count
+			if (EE[tempFront] + firstNode->getDuration() > EE[chosen->getVertexNum()]){ //do the math that is shown in lecture slide
 				EE[chosen->getVertexNum()] = EE[tempFront] + firstNode->getDuration();
 			}
 			if (predecessCopy[chosen->getVertexNum()] == 0){
-				EEstack.push_front(chosen->getVertexNum());
+				EEstack.push_front(chosen->getVertexNum()); //only push the successor on the stack if all predecessors have been seen
 			}
 			firstNode = firstNode->getNext();
 		}
@@ -186,14 +194,16 @@ void TaskManager::getEE(){
 		}
 		cout << endl;*/
 	}
+	/*
 	cout << "EE:\n";
 	for (int i = 0; i < numProjects; i++){
 		cout << EE[i] << ' ';
 	}
-	cout << endl;
-	critPath = EE[numProjects - 1];
+	cout << endl;*/
+	critPath = EE[numProjects - 1]; //critical path length, used in finding LE
 }
 
+//LE is very similar to EE except goes backwards from the last vertex and subtracts from the critical path length
 void TaskManager::getLE(){
 	LE.resize(numProjects, critPath);
 	deque<int> LEstack;
@@ -224,15 +234,24 @@ void TaskManager::getLE(){
 		}
 		cout << endl;*/
 	}
-	
+	/*
 	cout <<"LE:\n";
 	for (int i = 0; i < numProjects; i++){
 	cout << LE[i] << ' ';
 	}
-	cout << endl;
+	cout << endl;*/
 }
 
-
-
-
-
+//finds critical activities via the equation on slide 17 and 38
+void TaskManager::findCritical(){
+	getEE();
+	getLE();
+	vector<bool> isCritical(numActivities, false);
+	for (int i = 0; i < numActivities; i++){
+		if (LE[activityList[i].success] - activityList[i].duration - EE[activityList[i].predecess] == 0){
+			isCritical[i] = true;
+			int j = i + 1;
+			cout << "Activity " << j << " is Critical" << endl; // activities go from 0 - n-1, off by one
+		}
+	}
+}

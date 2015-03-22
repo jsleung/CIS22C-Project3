@@ -62,6 +62,12 @@ private:
 	vector<int> EE;
 	vector<int> LE;
 	vector<bool> critical;
+	struct edge{
+		int predecess;
+		int success;
+		int duration;
+	};
+	vector<edge> activityList;
 public:
 	TaskManager(int p);
 	~TaskManager() {}
