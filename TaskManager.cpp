@@ -2,8 +2,8 @@
 //  TaskManager.cpp
 //  Scheduler
 //
-//  Created by Brad Lasecke and Joshua Leung on 3/13/15.
-//  Copyright (c) 2015 Lasecke, Leung. All rights reserved.
+//  Created by Brad Lasecke on 3/13/15.
+//  Copyright (c) 2015 Lasecke. All rights reserved.
 //
 
 #include "AdjacencyList.h"
@@ -17,9 +17,6 @@ Vertex::Vertex()
 	vertexNum = -1;
 	predecessors = 0;
 	successors = 0;
-	eeTime = 0;
-	leTime = std::numeric_limits<int>::max(); //largest possible value
-	edge = *new Edge();
 	adjlist = new AdjacencyList();
 	invAdjList = new AdjacencyList(); //inverse adjacency list
 }
@@ -36,10 +33,6 @@ Vertex::Vertex(int v, int projectTime, string name)
 	jobName = name;
 }
 
-Vertex::Vertex(const Vertex& copy)
-{
-	Vertex(copy.vertexNum, copy.edge.getTime(), copy.jobName);
-}
 
 void Vertex::addToAdjList(Vertex& v, int jobtime)
 {
@@ -69,6 +62,7 @@ TaskManager::TaskManager(int p)
 {
 	numProjects = p;
 	critPath = 0;
+	numActivities = 0;
 	projectArr.resize(numProjects);
 }
 
@@ -159,11 +153,17 @@ void TaskManager::connect(Vertex& predecessor, Vertex& successor, int jobtime)
 {
 	predecessor.addToAdjList(successor, jobtime);
 	successor.addToInvAdjList(predecessor, jobtime);
+	numActivities++;
 }
 
 void TaskManager::getEE(){
 	EE.resize(numProjects, 0);
-	deque<int> EEstack;
+	deque<int> EEstack; //stack as in example
+	vector<int> predecessCopy; //copies the values of predecessors, so decreasing doesnt effect adjList
+	predecessCopy.resize(numProjects);
+	for (int i = 0; i < numProjects; i++){
+		predecessCopy[i] = projectArr[i].getPredecessorsCount();
+	}
 	EEstack.push_front(0);
 	while (!EEstack.empty()){
 		int tempFront = EEstack.front();
@@ -171,11 +171,11 @@ void TaskManager::getEE(){
 		Node * firstNode = (projectArr[tempFront].getAdjList())->getTop();
 		while (firstNode != nullptr){
 			Vertex *chosen = firstNode->getVertex();
-			chosen->decPredecessorsCount();
+			predecessCopy[chosen->getVertexNum()]--;
 			if (EE[tempFront] + firstNode->getDuration() > EE[chosen->getVertexNum()]){
 				EE[chosen->getVertexNum()] = EE[tempFront] + firstNode->getDuration();
 			}
-			if (chosen->getPredecessorsCount() == 0){
+			if (predecessCopy[chosen->getVertexNum()] == 0){
 				EEstack.push_front(chosen->getVertexNum());
 			}
 			firstNode = firstNode->getNext();
@@ -186,17 +186,22 @@ void TaskManager::getEE(){
 		}
 		cout << endl;*/
 	}
-	/*cout << "EE:\n";
+	cout << "EE:\n";
 	for (int i = 0; i < numProjects; i++){
 		cout << EE[i] << ' ';
 	}
-	cout << endl;*/
+	cout << endl;
 	critPath = EE[numProjects - 1];
 }
 
 void TaskManager::getLE(){
 	LE.resize(numProjects, critPath);
 	deque<int> LEstack;
+	vector<int> succesCopy;
+	succesCopy.resize(numProjects);
+	for (int i = 0; i < numProjects; i++){
+		succesCopy[i] = projectArr[i].getSuccessorsCount();
+	}
 	LEstack.push_front(numProjects - 1);
 	while (!LEstack.empty()){
 		int tempFront = LEstack.front();
@@ -204,11 +209,11 @@ void TaskManager::getLE(){
 		Node * firstNode = (projectArr[tempFront].getInvAdjList())->getTop();
 		while (firstNode != nullptr){
 			Vertex *chosen = firstNode->getVertex();
-			chosen->decSuccessorsCount();
+			succesCopy[chosen->getVertexNum()]--;
 			if (LE[tempFront] - firstNode->getDuration() < LE[chosen->getVertexNum()]){
 				LE[chosen->getVertexNum()] = LE[tempFront] - firstNode->getDuration();
 			}
-			if (chosen->getSuccessorsCount() == 0){
+			if (succesCopy[chosen->getVertexNum()] == 0){
 				LEstack.push_front(chosen->getVertexNum());
 			}
 			firstNode = firstNode->getNext();
@@ -219,10 +224,15 @@ void TaskManager::getLE(){
 		}
 		cout << endl;*/
 	}
-	/*
+	
 	cout <<"LE:\n";
 	for (int i = 0; i < numProjects; i++){
 	cout << LE[i] << ' ';
 	}
-	cout << endl;*/
+	cout << endl;
 }
+
+
+
+
+
