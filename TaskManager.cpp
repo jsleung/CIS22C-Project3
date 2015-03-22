@@ -2,8 +2,8 @@
 //  TaskManager.cpp
 //  Scheduler
 //
-//  Created by Brad Lasecke on 3/13/15.
-//  Copyright (c) 2015 Lasecke. All rights reserved.
+//  Created by Brad Lasecke and Joshua Leung on 3/13/15.
+//  Copyright (c) 2015 Lasecke, Leung. All rights reserved.
 //
 
 #include "AdjacencyList.h"
@@ -59,11 +59,17 @@ void Vertex::printAdjacencyList() const
 	adjlist->print();
 }
 
+void Vertex::printInvAdjacencyList() const
+{
+	cout << jobName << "'s Inverse adjacency list: Vertex Number [" << vertexNum << "]\nPredecessor count = " << predecessors << "\nSuccessor count = " << successors << endl;
+	invAdjList->print();
+}
+
 TaskManager::TaskManager(int p)
 {
 	numProjects = p;
+	critPath = 0;
 	projectArr.resize(numProjects);
-	//projectArr = new Vertex[numProjects];
 }
 
 void TaskManager::print()
@@ -72,7 +78,7 @@ void TaskManager::print()
 	{
 		//if there exists a vertex
 		if (projectArr[i].getVertexNum() != -1)
-			projectArr[i].printAdjacencyList();
+			projectArr[i].printInvAdjacencyList();
 	}
 }
 
@@ -155,9 +161,7 @@ void TaskManager::connect(Vertex& predecessor, Vertex& successor, int jobtime)
 	successor.addToInvAdjList(predecessor, jobtime);
 }
 
-
-vector<int> TaskManager::getEE(){
-	vector<int> EE;
+void TaskManager::getEE(){
 	EE.resize(numProjects, 0);
 	deque<int> EEstack;
 	EEstack.push_front(0);
@@ -170,9 +174,9 @@ vector<int> TaskManager::getEE(){
 			chosen->decPredecessorsCount();
 			if (EE[tempFront] + firstNode->getDuration() > EE[chosen->getVertexNum()]){
 				EE[chosen->getVertexNum()] = EE[tempFront] + firstNode->getDuration();
+			}
 			if (chosen->getPredecessorsCount() == 0){
 				EEstack.push_front(chosen->getVertexNum());
-				}
 			}
 			firstNode = firstNode->getNext();
 		}
@@ -182,9 +186,43 @@ vector<int> TaskManager::getEE(){
 		}
 		cout << endl;*/
 	}
-	/*for (int i = 0; i < numProjects; i++){
+	/*cout << "EE:\n";
+	for (int i = 0; i < numProjects; i++){
 		cout << EE[i] << ' ';
 	}
 	cout << endl;*/
-	return EE;
+	critPath = EE[numProjects - 1];
+}
+
+void TaskManager::getLE(){
+	LE.resize(numProjects, critPath);
+	deque<int> LEstack;
+	LEstack.push_front(numProjects - 1);
+	while (!LEstack.empty()){
+		int tempFront = LEstack.front();
+		LEstack.pop_front();
+		Node * firstNode = (projectArr[tempFront].getInvAdjList())->getTop();
+		while (firstNode != nullptr){
+			Vertex *chosen = firstNode->getVertex();
+			chosen->decSuccessorsCount();
+			if (LE[tempFront] - firstNode->getDuration() < LE[chosen->getVertexNum()]){
+				LE[chosen->getVertexNum()] = LE[tempFront] - firstNode->getDuration();
+			}
+			if (chosen->getSuccessorsCount() == 0){
+				LEstack.push_front(chosen->getVertexNum());
+			}
+			firstNode = firstNode->getNext();
+		}
+		/*cout << "pushed off " << tempFront << "\t";
+		for (int i = 0; i < numProjects; i++){
+		cout << LE[i] << ' ';
+		}
+		cout << endl;*/
+	}
+	/*
+	cout <<"LE:\n";
+	for (int i = 0; i < numProjects; i++){
+	cout << LE[i] << ' ';
+	}
+	cout << endl;*/
 }
