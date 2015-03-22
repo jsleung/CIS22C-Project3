@@ -86,6 +86,7 @@ public:
 	void disconnect(Vertex& predecessor, Vertex& successor); //removes what happens in the connect() function
 	void getInput(int numTimes);
 	vector<int> getEE();
+	vector<int> getLE();
 };
 
 
