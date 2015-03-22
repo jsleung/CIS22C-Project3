@@ -2,8 +2,8 @@
 //  TaskManager.h
 //  Scheduler
 //
-//  Created by Brad Lasecke and Joshua Leung
-//  Copyright (c) 2015 Lasecke, Leung. All rights reserved.
+//  Created by Brad Lasecke on 3/13/15.
+//  Copyright (c) 2015 Lasecke. All rights reserved.
 //
 
 #ifndef __Scheduler__TaskManager__
@@ -20,18 +20,6 @@ using namespace std;
 
 class AdjacencyList;
 
-class Edge
-{
-private:
-	int projectTime;
-public:
-	Edge() { projectTime = 0; }
-	Edge(int p) { projectTime = p; }
-	int getTime() const { return projectTime; }
-	void setTime(int p) { projectTime = p; }
-};
-
-
 class Vertex
 {
 private:
@@ -40,22 +28,13 @@ private:
 	int predecessors;
 	int successors;
 	int finalNode;
-	int eeTime; //earliest event time
-	int leTime; //latest event time
 	AdjacencyList* adjlist;
 	AdjacencyList* invAdjList;
 public:
-	Edge edge; //public in order to access data values inside Edge class
 	Vertex();
 	Vertex(int v, int projectTime);
 	Vertex(int v, int projectTime, string name);
-	Vertex(const Vertex& copy);
 	~Vertex() {}
-
-	void seteeTime(int e) { eeTime = e; }
-	void setleTime(int e) { leTime = e; }
-	int getEarliestTime() const { return eeTime; }
-	int getLatestTime() const { return leTime; }
 	void incSuccessorsCount() { successors++; }
 	void decSuccessorsCount() { successors--; }
 	int getSuccessorsCount() const { return successors; }
@@ -77,10 +56,12 @@ class TaskManager
 {
 private:
 	int numProjects;
+	int numActivities;
 	int critPath;
 	vector<Vertex> projectArr;
 	vector<int> EE;
 	vector<int> LE;
+	vector<bool> critical;
 public:
 	TaskManager(int p);
 	~TaskManager() {}
@@ -91,6 +72,7 @@ public:
 	void getInput(int numTimes);
 	void getEE();
 	void getLE();
+	void findCritical();
 };
 
 
