@@ -14,7 +14,7 @@ using namespace std;
 Vertex::Vertex()
 {
 	jobName = "null";
-	vertexNum = 0;
+	vertexNum = -1;
 	predecessors = 0;
 	successors = 0;
 	eeTime = 0;
@@ -41,16 +41,16 @@ Vertex::Vertex(const Vertex& copy)
 	Vertex(copy.vertexNum, copy.edge.getTime(), copy.jobName);
 }
 
-void Vertex::addToAdjList(Vertex& v)
+void Vertex::addToAdjList(Vertex& v, int jobtime)
 {
 	this->incSuccessorsCount();
-	this->adjlist->add(v);
+	this->adjlist->add(v, jobtime);
 }
 //one of these functions is going to double the amount of preds. and succs.
-void Vertex::addToInvAdjList(Vertex& v)
+void Vertex::addToInvAdjList(Vertex& v, int jobtime)
 {
 	this->incPredecessorsCount();
-	this->invAdjList->add(v);
+	this->invAdjList->add(v, jobtime);
 }
 
 void Vertex::printAdjacencyList() const
@@ -71,7 +71,7 @@ void TaskManager::print()
 	for (int i = 0; i < numProjects; i++)
 	{
 		//if there exists a vertex
-		if (projectArr[i].getVertexNum() != 0)
+		if (projectArr[i].getVertexNum() != -1)
 			projectArr[i].printAdjacencyList();
 	}
 }
@@ -81,7 +81,6 @@ void TaskManager::addVertex(int vNum, int projTime, string name)
 	if (vNum < numProjects)
 	{
 		projectArr[vNum].setVertexNum(vNum);
-		projectArr[vNum].edge.setTime(projTime);
 		projectArr[vNum].setName(name);
 	}
 	else
@@ -118,8 +117,6 @@ void TaskManager::getInput(int numTimes)
 			break;
 
 		name = input;
-		cout << "How many hours will " << name << " take? ";
-		cin >> jobTime;
 		addVertex(vertexNum, jobTime, name);
 		vertexNum++;
 	}
@@ -136,13 +133,24 @@ void TaskManager::getInput(int numTimes)
 			cin >> pred;
 			cout << "Which job would you like to connect it to?(0 -" << numTimes - 1 << ") ";
 			cin >> succes;
-			connect(projectArr[pred], projectArr[succes]);
+			cout << "How many hours will this connection take? ";
+			cin >> jobTime;
+			if (pred < 0 || pred >= numTimes || succes < 0 || succes >= numTimes || pred == succes){
+				cout << "Your jobs are not within bounds\n";
+				continue;
+			}
+			if (projectArr[pred].getAdjList()->find(projectArr[succes]) == nullptr){
+				connect(projectArr[pred], projectArr[succes], jobTime);
+			}
+			else{
+				cout << "That connection was already created\n";
+			}
 		}
 	}
 }
 
-void TaskManager::connect(Vertex& predecessor, Vertex& successor)
+void TaskManager::connect(Vertex& predecessor, Vertex& successor, int jobtime)
 {
-	predecessor.addToAdjList(successor);
-	successor.addToInvAdjList(predecessor);
+	predecessor.addToAdjList(successor, jobtime);
+	successor.addToInvAdjList(predecessor, jobtime);
 }
