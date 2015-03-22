@@ -17,13 +17,17 @@ class Vertex;
 class Node
 {
 private:
-    Vertex* vertex;
-    Node* next_;
+	Vertex* vertex;
+	int duration;
+	Node* next_;
 public:
-    Node() {vertex = 0; next_ = 0;}
-    Node(Vertex& v, Node* n) {vertex = &v; next_ = n;}
-    friend class AdjacencyList;
-    friend class Vertex;
+	Node() { vertex = nullptr; next_ = nullptr; }
+	Node(Vertex& v, Node* n, int jobtime) { vertex = &v; next_ = n; duration = jobtime; }
+	Vertex* getVertex(){ return vertex; }
+	Node * getNext() { return next_; }
+	int getDuration(){ return duration; }
+	friend class AdjacencyList;
+	friend class Vertex;
 };
 
 
